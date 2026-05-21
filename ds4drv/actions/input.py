@@ -23,6 +23,10 @@ ReportAction.add_option("--mapping", metavar="mapping",
                              "config file")
 ReportAction.add_option("--trackpad-mouse", action="store_true",
                         help="Makes the trackpad control the mouse")
+ReportAction.add_option("--force-usb-emulation", action="store_true",
+                        help="Force the virtual controller to be detected as "
+                             "a USB DualShock 4, even when connected via Bluetooth. "
+                             "Useful for games that only work with USB controllers")
 
 
 class ReportActionInput(ReportAction):
@@ -62,6 +66,8 @@ class ReportActionInput(ReportAction):
                 joystick_layout = "xpad"
             elif options.emulate_xpad_wireless:
                 joystick_layout = "xpad_wireless"
+            elif options.force_usb_emulation:
+                joystick_layout = "ds4-usb"
             else:
                 joystick_layout = "ds4"
 
