@@ -60,7 +60,10 @@ class HidrawDS4Device(DS4Device):
         buf = bytearray(size + 1)
         buf[0] = report_id
 
-        return fcntl.ioctl(self.fd, op, bytes(buf))
+        try:
+            return fcntl.ioctl(self.fd, op, bytes(buf))
+        except OSError as err:
+            raise DeviceError(f"Failed to read feature report 0x{report_id:02x}: {err}")
 
     def write_report(self, report_id, data):
         hid = bytearray((report_id,))
@@ -84,7 +87,12 @@ class HidrawBluetoothDS4Device(HidrawDS4Device):
     valid_report_id = 0x11
 
     def set_operational(self):
-        self.read_feature_report(0x02, 37)
+        try:
+            self.read_feature_report(0x02, 37)
+        except DeviceError:
+            # Some devices may not support this feature report
+            # Continue anyway as it's not critical for operation
+            pass
 
 
 class HidrawUSBDS4Device(HidrawDS4Device):
